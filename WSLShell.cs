@@ -22,12 +22,12 @@ namespace FuseCP.Providers.OS
 			return name;
 		}
 
-		public class ConfigurationSection : OrderedNameDictionary<string?>
+		public class ConfigurationSection : OrderedNameDictionary<string>
 		{
 			public ConfigurationSection() : base(StringComparer.OrdinalIgnoreCase) { }
 			public bool Exists => base.Count > 0;
 			public virtual string Title { get; }
-			public bool? ParseBool(string? setting)
+			public bool? ParseBool(string setting)
 			{
 				var value = this[setting];
 				if (string.IsNullOrEmpty(value)) return null;
@@ -36,7 +36,7 @@ namespace FuseCP.Providers.OS
 				return null;
 			}
 
-			public int? ParseInt(string? setting)
+			public int? ParseInt(string setting)
 			{
 				var value = this[setting];
 				if (string.IsNullOrEmpty(value)) return null;
@@ -84,7 +84,7 @@ namespace FuseCP.Providers.OS
 				get => ParseBool(this[nameof(Systemd)]);
 				set => this[nameof(Systemd)] = value?.ToString();
 			}
-			public string? Command
+			public string Command
 			{
 				get => this[nameof(Command)];
 				set => this[nameof(Command)] = value;
@@ -94,12 +94,12 @@ namespace FuseCP.Providers.OS
 		public class Wsl2Section : ConfigurationSection
 		{
 			public override string Title => "Wsl2";
-			public string? Kernel
+			public string Kernel
 			{
 				get => this[nameof(Kernel)];
 				set => this[nameof(Kernel)] = value;
 			}
-			public string? Memory
+			public string Memory
 			{
 				get => this[nameof(Memory)];
 				set => this[nameof(Memory)] = value;
@@ -114,7 +114,7 @@ namespace FuseCP.Providers.OS
 				get => ParseBool(this[nameof(LocalhostForwarding)]);
 				set => this[nameof(LocalhostForwarding)] = value?.ToString();
 			}
-			public string? KernelCommandLine
+			public string KernelCommandLine
 			{
 				get => this[nameof(KernelCommandLine)];
 				set => this[nameof(KernelCommandLine)] = value;
@@ -124,12 +124,12 @@ namespace FuseCP.Providers.OS
 				get => ParseBool(this[nameof(SafeMode)]);
 				set => this[nameof(SafeMode)] = value?.ToString();
 			}
-			public string? Swap
+			public string Swap
 			{
 				get => this[nameof(Swap)];
 				set => this[nameof(Swap)] = value;
 			}
-			public string? SwapFile
+			public string SwapFile
 			{
 				get => this[nameof(SwapFile)];
 				set => this[nameof(SwapFile)] = value;
@@ -196,7 +196,7 @@ namespace FuseCP.Providers.OS
 		public class ExperimentalSection : ConfigurationSection
 		{
 			public override string Title => "Experimental";
-			public string? AutoMemoryReclaim
+			public string AutoMemoryReclaim
 			{
 				get => this[nameof(AutoMemoryReclaim)];
 				set => this[nameof(AutoMemoryReclaim)] = value;
@@ -221,7 +221,7 @@ namespace FuseCP.Providers.OS
 				get => ParseInt(this[nameof(InitialAutoProxyTimeout)]);
 				set => this[nameof(InitialAutoProxyTimeout)] = value?.ToString();
 			}
-			public string? IgnorePorts
+			public string IgnorePorts
 			{
 				get => this[nameof(IgnorePorts)];
 				set => this[nameof(IgnorePorts)] = value;
@@ -246,12 +246,12 @@ namespace FuseCP.Providers.OS
 				get => ParseBool(this[nameof(MountFsTab)]);
 				set => this[nameof(MountFsTab)] = value?.ToString();
 			}
-			public string? Root
+			public string Root
 			{
 				get => this[nameof(Root)];
 				set => this[nameof(Root)] = value;
 			}
-			public string? Options
+			public string Options
 			{
 				get => this[nameof(Options)];
 				set => this[nameof(Options)] = value;
@@ -273,7 +273,7 @@ namespace FuseCP.Providers.OS
 				set => this[nameof(GenerateResolvConf)] = value?.ToString();
 			}
 
-			public string? Hostname
+			public string Hostname
 			{
 				get => this[nameof(Hostname)];
 				set => this[nameof(Hostname)] = value;
@@ -299,7 +299,7 @@ namespace FuseCP.Providers.OS
 		public class UserSection : ConfigurationSection
 		{
 			public override string Title => "User";
-			public string? Default
+			public string Default
 			{
 				get => this[nameof(Default)];
 				set => this[nameof(Default)] = value;

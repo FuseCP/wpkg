@@ -47,7 +47,7 @@ namespace WindowsPackager
 				foreach (var name in path.Substring(root.Length).Split(Path.DirectorySeparatorChar))
 					root = Directory.GetFileSystemEntries(root, name).First();
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				// Log("Path not found: " + path);
 				root += path.Substring(root.Length);
