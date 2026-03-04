@@ -466,13 +466,8 @@ namespace FuseCP.Providers.OS
 		static Shell standard = null;
 		public static Shell Standard => standard ??= new StandardShell();
 
-#if wpkg
-		public readonly static Shell Default = new StandardShell(); // OSInfo.Current.DefaultShell;
+		public readonly static Shell Default = new StandardShell();
 		public static bool IsWindows => RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
-#else
-		public static Shell Default => OSInfo.Current.DefaultShell;
-		public static bool IsWindows => OSInfo.IsWindows;
-#endif
 	}
 
 	public class StandardShell : Shell

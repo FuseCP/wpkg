@@ -682,11 +682,7 @@ namespace FuseCP.Providers.OS
 
 		public new readonly static WSLShell Default = new WSLShell();
 
-#if wpkg
 		public static new bool IsWindows => RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
-#else
-		public static new bool IsWindows => OSInfo.IsWindows;
-#endif
 
 	}
 }
