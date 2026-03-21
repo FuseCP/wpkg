@@ -93,7 +93,7 @@ namespace WindowsPackager.ARFileFormat
             }
             else {
                 byte[] buffer = new byte[PaddingSize(alignmentBase, currentIndex)];
-                this.Stream.Read(buffer, 0, buffer.Length);
+                this.Stream.ReadExactly(buffer, 0, buffer.Length);
             }
         }
     }
