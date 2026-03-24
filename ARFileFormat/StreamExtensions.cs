@@ -9,6 +9,24 @@ namespace WindowsPackager.ARFileFormat
     internal static class StreamExtensions
     {
 
+        public static void ReadExactly(this Stream stream, byte[] buffer, int offset, int count) {
+            if (stream == null) {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            var totalRead = 0;
+
+            while (totalRead < count) {
+                var read = stream.Read(buffer, offset + totalRead, count - totalRead);
+
+                if (read == 0) {
+                    throw new EndOfStreamException("Not enough data");
+                }
+
+                totalRead += read;
+            }
+        }
+
         public static T ReadStruct<T>(this Stream stream)
             where T : struct {
             if (stream == null) {
@@ -21,7 +39,7 @@ namespace WindowsPackager.ARFileFormat
             var totalRead = 0;
 
             while (totalRead < size) {
-                var read = stream.Read(data, totalRead, size);
+                var read = stream.Read(data, totalRead, size - totalRead);
 
                 if (read == 0) {
                     break;
