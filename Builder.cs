@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using WindowsPackager.ARFileFormat;
 using ICSharpCode.SharpZipLib.Tar;
 
@@ -48,7 +49,7 @@ namespace WindowsPackager
         public static void BuildDataTarball(string directory) {
             string TarballName = "data.tar";
             Stream outStream = File.Create(directory + "\\" + TarballName);
-            Stream tarballStream = new TarOutputStream(outStream);
+            Stream tarballStream = new TarOutputStream(outStream, Encoding.UTF8);
             TarArchive dataTar = TarArchive.CreateOutputTarArchive(tarballStream);
 
             // fix str (mandatory hotfix due to SharpZipLib)
@@ -72,29 +73,43 @@ namespace WindowsPackager
         public static void BuildControlTarball(string directory) {
             string TarballName = "control.tar";
             Stream outStream = File.Create(directory + "\\" + TarballName);
-            Stream tarballStream = new TarOutputStream(outStream);
+            Stream tarballStream = new TarOutputStream(outStream, Encoding.UTF8);
             TarArchive controlTar = TarArchive.CreateOutputTarArchive(tarballStream);
-            
+
+            var controlDirectory = Program.GetControlDirectory(directory);
+            var controlFilePath = Program.GetControlFilePath(directory);
+
             // fix str (mandatory hotfix due to SharpZipLib)
-            controlTar.RootPath = directory.Replace('\\', '/');
+            controlTar.RootPath = controlDirectory.Replace('\\', '/');
             if (controlTar.RootPath.EndsWith("/")) {
                 controlTar.RootPath = controlTar.RootPath.Remove(controlTar.RootPath.Length - 1);
             }
-            
-            // generate filename
-            string line;
-            StreamReader ctrlData = new StreamReader(directory + "\\control");
-            line = ctrlData.ReadLine();
-            DebFileName = line.Split(':').Last().Remove(0, 1) + ".deb";
+
+            // generate filename from control metadata
+            var packageName = string.Empty;
+            var ctrlLines = File.ReadAllLines(controlFilePath);
+            foreach (var ctrlLine in ctrlLines)
+            {
+                if (ctrlLine.StartsWith("Package:", StringComparison.OrdinalIgnoreCase))
+                {
+                    packageName = ctrlLine.Split(':').Last().Trim();
+                    break;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(packageName) && ctrlLines.Length > 0)
+            {
+                packageName = ctrlLines[0].Split(':').Last().Trim();
+            }
+
+            DebFileName = packageName + ".deb";
             Console.WriteLine("Building " + DebFileName + " ...");
-            ctrlData.Close();
 
             // scan for eligible control.tar entries & add them
-            string[] files = Directory.GetFiles(directory);
+            string[] files = Directory.GetFiles(controlDirectory);
             foreach (var item in files) {
                 var fn = Path.GetFileName(item);
                 if (fn.Equals("control") || fn.Equals("preinst") || fn.Equals("postinst") || fn.Equals("prerm") || fn.Equals("postrm")) {
-                    // DEBUG: Console.WriteLine("Found match: " + fn);
                     TarEntry entry = TarEntry.CreateEntryFromFile(item);
                     controlTar.WriteEntry(entry, false);
                 }

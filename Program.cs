@@ -136,14 +136,31 @@ namespace WindowsPackager
             if (subdirs.Length > 0) {
                 passed++;
             }
-            // check if we have a control file
-            if (File.Exists(directory + "\\control")) {
+            // support both legacy wpkg layout (control in root) and Debian layout (DEBIAN\control)
+            if (File.Exists(GetControlFilePath(directory))) {
                 passed++;
             }
             // check if our struct matches
             if (passed != 2) {
                 ExitWithMessage(ERRMSG_STRUCT_FAILURE, EXIT_STRUCT_ERROR);
             }
+        }
+
+        public static string GetControlDirectory(string directory)
+        {
+            var debianControlDir = Path.Combine(directory, "DEBIAN");
+            return Directory.Exists(debianControlDir) ? debianControlDir : directory;
+        }
+
+        public static string GetControlFilePath(string directory)
+        {
+            var rootControl = Path.Combine(directory, "control");
+            if (File.Exists(rootControl))
+            {
+                return rootControl;
+            }
+
+            return Path.Combine(GetControlDirectory(directory), "control");
         }
 
         private static void GenerateControlFile(string WorkingDir) {
